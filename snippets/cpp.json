@@ -1,0 +1,19 @@
+{
+  "Competitive Programming": {
+    "prefix": "csce430",
+    "body": [
+      "#include <bits/stdc++.h>",
+      "using namespace std;",
+      "using ll = long long;",
+      "using pii = pair<int, int>;",
+      "constexpr nl = '\\n';",
+      "constexpr MOD = (int)1e9 + 7;\n",
+      "$1\n",
+      "int main() {",
+      "\tios_base::sync_with_stdio(false);",
+      "\tcin.tie(NULL);\n",
+      "\t$0",
+      "}"
+    ]
+  }
+}

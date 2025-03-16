@@ -229,16 +229,20 @@ vim.opt.rtp:prepend(lazypath)
 --    :Lazy update
 --
 -- NOTE: Here is where you install your plugins.
-
--- Plugin keymaps
-vim.keymap.set('n', '<C-b>', '<cmd>NvimTreeToggle<CR>')
-
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
   {
-    'nvim-tree/nvim-tree.lua',
-    opts = {},
+    'iamcco/markdown-preview.nvim',
+    cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
+    build = 'cd app && yarn install',
+    init = function()
+      vim.g.mkdp_filetypes = { 'markdown' }
+    end,
+    ft = { 'markdown' },
+    keys = {
+      { '<leader>p', '<cmd>MarkdownPreviewToggle<CR>', desc = 'Toggle Markdown [P]review', silent = true },
+    },
   },
 
   -- NOTE: Plugins can also be added by using a table,
@@ -728,7 +732,7 @@ require('lazy').setup({
         html = {},
         -- java_language_server = {},
         jsonls = {},
-        ltex = {},
+        texlab = {},
         pylsp = {},
         r_language_server = {},
         -- gopls = {},
@@ -902,9 +906,9 @@ require('lazy').setup({
         -- No, but seriously. Please read `:help ins-completion`, it is really good!
         mapping = cmp.mapping.preset.insert {
           -- Select the [n]ext item
-          ['<C-n>'] = cmp.mapping.select_next_item(),
+          -- ['<C-n>'] = cmp.mapping.select_next_item(),
           -- Select the [p]revious item
-          ['<C-p>'] = cmp.mapping.select_prev_item(),
+          -- ['<C-p>'] = cmp.mapping.select_prev_item(),
 
           -- Scroll the documentation window [b]ack / [f]orward
           ['<C-b>'] = cmp.mapping.scroll_docs(-4),
@@ -917,9 +921,9 @@ require('lazy').setup({
 
           -- If you prefer more traditional completion keymaps,
           -- you can uncomment the following lines
-          -- ['<CR>'] = cmp.mapping.confirm { select = true },
-          -- ['<Tab>'] = cmp.mapping.select_next_item(),
-          -- ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+          ['<CR>'] = cmp.mapping.confirm { select = true },
+          ['<Tab>'] = cmp.mapping.select_next_item(),
+          ['<S-Tab>'] = cmp.mapping.select_prev_item(),
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
@@ -1071,8 +1075,8 @@ require('lazy').setup({
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
