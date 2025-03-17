@@ -206,6 +206,15 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+vim.api.nvim_create_autocmd('TermOpen', {
+  desc = 'Turn off line numbers in terminal mode',
+  group = vim.api.nvim_create_augroup('term-options', { clear = true }),
+  callback = function()
+    vim.o.number = false
+    vim.o.relativenumber = false
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
