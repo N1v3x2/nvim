@@ -1,0 +1,22 @@
+snippet csce430 Competive Programming
+	CXX=g++-14
+	CXXFLAGS=-std=c++17 -Wall -Wextra
+	TARGET=output
+
+	ifneq ($(MAKECMDGOALS),clean)
+	ifeq ($(strip $(SRC)),)
+	$(error SRC must be provided. Usage: make SRC=file.cc)
+	endif
+	endif
+
+	run: $(TARGET)
+		./cpp.snippets
+	
+	debug: $(TARGET)
+		lldb $(TARGET)
+	
+	$(TARGET): $(SRC)
+		$(CXX) $(CXXFLAGS) -g -o $(TARGET) $(SRC)
+	
+	clean:
+		rm -f $(TARGET) && rm -r $(TARGET).dSYM

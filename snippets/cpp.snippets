@@ -1,0 +1,26 @@
+extends c
+
+snippet csce430 Competitive Programming Boilerplate
+	#include <bits/stdc++.h>
+	using namespace std;
+	using ll = long long;
+	using pii = pair<int, int>;
+
+	constexpr char nl = '\n';
+	constexpr int MOD = (int)1e9 + 7;
+
+	$1
+
+	int main() {
+		ios_base::sync_with_stdio(false);
+		cin.tie(NULL);
+
+		$0
+	}
+
+snippet orderedset GNU PBDS Order Statistic Tree
+	#include <ext/pb_ds/assoc_container.hpp>
+	using namespace __gnu_pbds;
+
+	template <class T>
+	using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
