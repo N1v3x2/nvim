@@ -101,6 +101,12 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+vim.keymap.set('n', '<C-q>', '<cmd>bd!<CR>', { desc = 'Delete current buffer' })
+
+-- Terminal shortcuts
+vim.keymap.set('n', '<leader>t', '<cmd>sp +term<CR>', { desc = 'Open horizontal terminal' })
+vim.keymap.set('n', '<leader>v', '<cmd>vert term<CR>', { desc = 'Open vertical terminal' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -232,6 +238,7 @@ require('lazy').setup({
         { '<leader>w', group = '[W]orkspace' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>l', group = '[L]atex' },
       },
     },
   },
@@ -559,7 +566,12 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         bashls = {},
-        clangd = {},
+        clangd = {
+          cmd = {
+            vim.fn.stdpath 'data' .. '/mason/bin/clangd',
+            '--header-insertion=never',
+          },
+        },
         -- ccls = {},
         cmake = {},
         cssls = {},
@@ -766,6 +778,8 @@ require('lazy').setup({
           --  completions whenever it has completion options available.
           ['<C-Space>'] = cmp.mapping.complete {},
 
+          -- TODO: figure out mapping to dismiss completion window
+
           -- Think of <c-l> as moving to the right of your snippet expansion.
           --  So if you have a snippet that's like:
           --  function $name($args)
@@ -816,6 +830,8 @@ require('lazy').setup({
     -- 'savq/melange-nvim',
     -- 'loctvl842/monokai-pro.nvim',
     'sainnhe/gruvbox-material',
+    -- 'Mofiqul/vscode.nvim',
+    -- 'AlexvZyl/nordic.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
       -- ---@diagnostic disable-next-line: missing-fields
@@ -828,7 +844,7 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.g.gruvbox_material_background = 'hard'
+      -- vim.g.gruvbox_material_background = 'hard'
       vim.cmd.colorscheme 'gruvbox-material'
     end,
   },
@@ -879,11 +895,12 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'jsonc', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
         enable = true,
+        disable = { 'latex' },
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.

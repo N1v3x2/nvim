@@ -15,11 +15,23 @@ return {
       { '<leader>p', '<cmd>MarkdownPreviewToggle<CR>', desc = 'Toggle Markdown [P]review', silent = true },
     },
   },
-
-  -- TS has a dedicated plugin for its language server
   {
+    -- Dedicated TS LSP extension (since ts_ls is slow)
     'pmizio/typescript-tools.nvim',
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
     opts = {},
+  },
+  {
+    'lervag/vimtex',
+    lazy = false, -- we don't want to lazy load VimTeX
+    -- tag = "v2.15", -- uncomment to pin to a specific release
+    init = function()
+      -- VimTeX configuration goes here, e.g.
+      vim.g.vimtex_view_method = 'zathura'
+      vim.g.vimtex_view_zathura_use_synctex = 0
+    end,
+  },
+  {
+    'jamestthompson3/nvim-remote-containers',
   },
 }
