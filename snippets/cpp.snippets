@@ -5,9 +5,7 @@ snippet csce430 Competitive Programming Boilerplate
 	using namespace std;
 	using ll = long long;
 	using pii = pair<int, int>;
-
 	constexpr char nl = '\n';
-	constexpr int MOD = (int)1e9 + 7;
 
 	$1
 
@@ -24,3 +22,31 @@ snippet orderedset GNU PBDS Order Statistic Tree
 
 	template <class T>
 	using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+snippet dsu Disjoint Set Union
+	class DSU {
+		vector<int> parent, setSize;
+	
+	public:
+		DSU(int n) : parent(n), setSize(n, 1) {
+			iota(parent.begin(), parent.end(), 0);
+		}
+
+		int findSet(int x) {
+			if (parent[x] == x) return x;
+			return parent[x] = findSet(parent[x]);
+		}
+
+		bool unionSet(int x, int y) {
+			int parX = findSet(x), parY = findSet(y);
+			if (parX == parY) return false;
+			if (setSize[x] < setSize[y]) {
+				parent[parX] = parY;
+				setSize[parY] += setSize[parX];
+			} else {
+				parent[parY] = parX;
+				setSize[parX] += setSize[parY];
+			}
+			return true;
+		}
+	}
