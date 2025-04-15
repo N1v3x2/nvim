@@ -17,7 +17,7 @@ vim.opt.number = true
 -- vim.opt.relativenumber = true
 
 -- Mouse mode
-vim.opt.mouse = ''
+-- vim.opt.mouse = ''
 
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
@@ -92,8 +92,12 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+vim.keymap.set('n', '<C-q>', function()
+  vim.cmd 'w!'
+  vim.cmd 'bd!'
+end, { desc = 'Delete current buffer' })
 
-vim.keymap.set('n', '<C-q>', '<cmd>bd!<CR>', { desc = 'Delete current buffer' })
+vim.keymap.set('n', '<C-y>', '<Cmd>%y<CR>', { desc = 'Yank entire file' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -118,36 +122,62 @@ vim.api.nvim_create_autocmd('TermOpen', {
   end,
 })
 
--- local servers = {
---   'bashls',
---   'clangd',
---   'cmake',
---   'cssls',
---   'docker_compose_language_service',
---   'dockerls',
---   'eslint',
---   'graphql',
---   'html',
---   'jsonls',
---   'buf_ls',
---   'pylsp',
---   'lua_ls',
--- }
-
-vim.lsp.enable {
+local servers = {
+  'bashls',
   'clangd',
-  'bash-language-server',
-  'buf',
-  'css-lsp',
-  'lua-language-server',
+  'cmake',
+  'cssls',
+  'docker_compose_language_service',
+  'dockerls',
+  'eslint',
+  'graphql',
+  'html',
+  'jsonls',
+  'buf_ls',
   'pylsp',
+  'lua_ls',
+}
+vim.lsp.enable(servers)
+
+vim.filetype.add {
+  filename = {
+    ['docker-compose.yaml'] = 'yaml.docker-compose',
+    ['docker-compose.yml'] = 'yaml.docker-compose',
+    ['compose.yaml'] = 'yaml.docker-compose',
+    ['compose.yml'] = 'yaml.docker-compose',
+  },
 }
 
+vim.keymap.set('n', 'grr', vim.lsp.buf.references, { desc = 'vim.lsp.buf.references()' })
+vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'vim.lsp.buf.definition()' })
+vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, { desc = 'vim.lsp.buf.type_definition()' })
+
+require('custom.lsp.lsp_hover').setup()
+-- vim.api.nvim_create_autocmd('LspAttach', {
+--   callback = function(event)
+--     vim.keymap.set('n', 'K', function()
+--       vim.lsp.buf.hover {
+--         border = 'rounded',
+--       }
+--     end, { buffer = event.buf })
+--   end,
+-- })
+-- vim.api.nvim_create_autocmd('ColorScheme', {
+--   callback = function()
+--     -- TODO: Figure out if it's possible to change the background color for LSP hover windows without affecting every hover window
+--     vim.api.nvim_set_hl(0, 'NormalFloat', { link = 'Normal' }) -- Background of hover window
+--     vim.api.nvim_set_hl(0, 'FloatBorder', { link = 'DiagnosticInfo' }) -- Border color
+--   end,
+-- })
+--
 -- LSP config
 vim.diagnostic.config {
   severity_sort = true,
-  -- virtual_lines = true,
-  -- float = { border = 'rounded', source = 'if_many' },
+  virtual_lines = true,
+  float = {
+    border = 'rounded',
+    source = 'if_many',
+  },
   underline = { severity = vim.diagnostic.severity.ERROR },
   signs = vim.g.have_nerd_font and {
     text = {
@@ -157,19 +187,20 @@ vim.diagnostic.config {
       [vim.diagnostic.severity.HINT] = '󰌶 ',
     },
   } or {},
-  virtual_text = {
-    source = 'if_many',
-    spacing = 2,
-    format = function(diagnostic)
-      local diagnostic_message = {
-        [vim.diagnostic.severity.ERROR] = diagnostic.message,
-        [vim.diagnostic.severity.WARN] = diagnostic.message,
-        [vim.diagnostic.severity.INFO] = diagnostic.message,
-        [vim.diagnostic.severity.HINT] = diagnostic.message,
-      }
-      return diagnostic_message[diagnostic.severity]
-    end,
-  },
+  virtual_text = false,
+  -- virtual_text = {
+  --   source = 'if_many',
+  --   spacing = 2,
+  --   format = function(diagnostic)
+  --     local diagnostic_message = {
+  --       [vim.diagnostic.severity.ERROR] = diagnostic.message,
+  --       [vim.diagnostic.severity.WARN] = diagnostic.message,
+  --       [vim.diagnostic.severity.INFO] = diagnostic.message,
+  --       [vim.diagnostic.severity.HINT] = diagnostic.message,
+  --     }
+  --     return diagnostic_message[diagnostic.severity]
+  --   end,
+  -- },
 }
 
 -- [[ Install `lazy.nvim` plugin manager ]]
@@ -795,7 +826,7 @@ require('lazy').setup({
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
-      'hrsh7th/cmp-nvim-lsp-signature-help',
+      -- 'hrsh7th/cmp-nvim-lsp-signature-help',
     },
     config = function()
       -- See `:help cmp`
@@ -806,6 +837,8 @@ require('lazy').setup({
       -- Disable built-in LSP hover window so it doesn't overlap with nvim-cmp
       vim.lsp.handlers['textDocument/hover'] = function() end
 
+      ---@diagnostic disable: undefined-field
+      ---@diagnostic disable-next-line: redundant-parameter
       cmp.setup {
         snippet = {
           expand = function(args)
@@ -819,39 +852,13 @@ require('lazy').setup({
         --
         -- No, but seriously. Please read `:help ins-completion`, it is really good!
         mapping = cmp.mapping.preset.insert {
-          -- Select the [n]ext item
-          -- ['<C-n>'] = cmp.mapping.select_next_item(),
-          -- Select the [p]revious item
-          -- ['<C-p>'] = cmp.mapping.select_prev_item(),
-
-          -- Scroll the documentation window [b]ack / [f]orward
-          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-b>'] = cmp.mapping.scroll_docs(-5),
           ['<C-f>'] = cmp.mapping.scroll_docs(4),
-
-          -- Accept ([y]es) the completion.
-          --  This will auto-import if your LSP supports it.
-          --  This will expand snippets if the LSP sent a snippet.
-          -- ['<C-y>'] = cmp.mapping.confirm { select = true },
-
-          -- If you prefer more traditional completion keymaps,
-          -- you can uncomment the following lines
           ['<CR>'] = cmp.mapping.confirm { select = true },
+
           ['<Tab>'] = cmp.mapping.select_next_item(),
           ['<S-Tab>'] = cmp.mapping.select_prev_item(),
 
-          -- Manually trigger a completion from nvim-cmp.
-          --  Generally you don't need this, because nvim-cmp will display
-          --  completions whenever it has completion options available.
-          ['<C-Space>'] = cmp.mapping.complete {},
-
-          -- Think of <c-l> as moving to the right of your snippet expansion.
-          --  So if you have a snippet that's like:
-          --  function $name($args)
-          --    $body
-          --  end
-          --
-          -- <c-l> will move you to the right of each of the expansion locations.
-          -- <c-h> is similar, except moving you backwards.
           ['<C-l>'] = cmp.mapping(function()
             if luasnip.expand_or_locally_jumpable() then
               luasnip.expand_or_jump()
@@ -862,23 +869,26 @@ require('lazy').setup({
               luasnip.jump(-1)
             end
           end, { 'i', 's' }),
-
-          -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
-          --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
         },
         sources = {
-          {
-            name = 'lazydev',
-            -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
-            group_index = 0,
-          },
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
-          { name = 'nvim_lsp_signature_help' },
           { name = 'render-markdown' },
         },
+        window = {
+          completion = cmp.config.window.bordered {
+            border = 'rounded',
+            winhighlight = 'FloatBorder:Comment',
+            -- winhighlight = 'Normal:Normal,FloatBorder:DiagnosticInfo',
+          },
+          documentation = cmp.config.window.bordered {
+            border = 'rounded',
+            winhighlight = 'FloatBorder:Comment',
+          },
+        },
       }
+      ---@diagnostic enable: undefined-field
     end,
   },
 
@@ -895,7 +905,6 @@ require('lazy').setup({
     -- 'savq/melange-nvim',
     -- 'loctvl842/monokai-pro.nvim',
     'sainnhe/gruvbox-material',
-    -- 'Mofiqul/vscode.nvim',
     -- 'AlexvZyl/nordic.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
@@ -949,6 +958,8 @@ require('lazy').setup({
       statusline.section_location = function()
         return '%2l:%-2v'
       end
+
+      require('mini.tabline').setup()
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim

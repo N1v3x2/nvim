@@ -3,7 +3,8 @@ return {
   cmd = {
     vim.fn.stdpath 'data' .. '/mason/bin/clangd',
     '--clang-tidy',
+    '--header-insertion=never',
   },
-  root_markers = { '.clangd', 'compile_commands.json' },
-  filetypes = { 'c', 'cpp' },
+  filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda' },
+  root_markers = { '.clangd', '.clang-tidy', '.clang-format', 'compile_commands.json' },
 }

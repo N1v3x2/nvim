@@ -17,34 +17,40 @@ return {
     'folke/snacks.nvim',
     priority = 1000,
     lazy = false,
-    config = function()
-      -- Debug config
+    init = function()
+      ---@diagnostic disable-next-line: duplicate-set-field
       _G.dd = function(...)
         Snacks.debug.inspect(...)
       end
+      ---@diagnostic disable-next-line: duplicate-set-field
       _G.bt = function()
         Snacks.debug.backtrace()
       end
       vim.print = _G.dd
 
-      -- Turn off animations
       vim.g.snacks_animate = false
 
-      require('snacks').setup {
-        bigfile = { enabled = true },
-        -- dashboard = { enabled = true },
-        explorer = { enabled = true },
-        indent = { enabled = true },
-        input = { enabled = true },
-        picker = { enabled = true },
-        notifier = { enabled = true },
-        quickfile = { enabled = true },
-        scope = { enabled = true },
-        scroll = { enabled = true },
-        statuscolumn = { enabled = true },
-        words = { enabled = true },
-      }
+      vim.keymap.set('n', '<leader>g', function()
+        Snacks.lazygit()
+      end, { desc = 'Open Lazygit' })
+
+      vim.keymap.set('n', '<leader>nh', function()
+        Snacks.notifier.show_history()
+      end, { desc = '[N]otifier [H]istory' })
     end,
+    opts = {
+      bigfile = { enable = true },
+      dashboard = { enable = true },
+      indent = { enable = true },
+      input = { enable = true },
+      lazygit = { enable = true },
+      notifier = { enable = true },
+      quickfile = { enable = true },
+      scope = { enable = true },
+      scroll = { enable = true },
+      statuscolumn = { enable = true },
+      words = { enable = true },
+    },
   },
   {
     'folke/noice.nvim',
@@ -55,7 +61,6 @@ return {
         command_palette = true, -- position the cmdline and popupmenu together
         long_message_to_split = true, -- long messages will be sent to a split
         inc_rename = false, -- enables an input dialog for inc-rename.nvim
-        lsp_doc_border = false, -- add a border to hover docs and signature help
       },
       routes = {
         {
@@ -63,7 +68,15 @@ return {
           filter = { event = 'msg_showmode' },
         },
       },
+      lsp = {
+        hover = { enabled = false },
+        signature = { enabled = false },
+      },
     },
+    init = function()
+      vim.api.nvim_set_hl(0, 'NormalFloat', { link = 'Normal' }) -- Background of hover window
+      vim.api.nvim_set_hl(0, 'FloatBorder', { link = 'DiagnosticInfo' }) -- Border color
+    end,
     dependencies = {
       -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
       'MunifTanjim/nui.nvim',
@@ -85,13 +98,44 @@ return {
   {
     'MeanderingProgrammer/render-markdown.nvim',
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
-    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
-    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
-    opts = {},
+    opts = {
+      heading = {
+        backgrounds = {},
+      },
+      code = {
+        -- style = 'language',
+        -- position = 'right',
+        border = 'thick',
+      },
+      pipe_table = {
+        preset = 'round',
+      },
+    },
     init = function()
       vim.keymap.set('n', '<leader>mt', '<cmd>RenderMarkdown toggle<CR>', { desc = 'Toggle RenderMarkdown' })
     end,
+  },
+  {
+    'danymat/neogen',
+    init = function()
+      local opts = { noremap = true, silent = true }
+      vim.api.nvim_set_keymap('n', '<Leader>nf', ":lua require('neogen').generate()<CR>", opts)
+      vim.api.nvim_set_keymap('n', '<Leader>nc', ":lua require('neogen').generate({ type = 'class' })<CR>", opts)
+    end,
+    config = true,
+    opts = { snippet_engine = 'luasnip' },
+    -- Uncomment next line if you want to follow only stable versions
+    -- version = "*"
+  },
+  {
+    'sphamba/smear-cursor.nvim',
+    opts = {
+      -- cursor_color = 'none',
+    },
+  },
+  {
+    'let-def/texpresso.vim',
   },
 }

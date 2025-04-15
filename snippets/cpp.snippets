@@ -50,3 +50,98 @@ snippet dsu Disjoint Set Union
 			return true;
 		}
 	};
+
+snippet dinics Dinics Algorithm (Max Flow)
+	class Dinics {
+	  private:
+		struct Edge {
+			int v, flow, cap, rev;
+		};
+		vector<vector<Edge>> adj;
+		vector<int> level;
+		int n;
+
+	  public:
+		Dinics(int n) : n(n) { adj.assign(n, {}); }
+
+		void addEdge(int u, int v, int c) {
+			adj[u].push_back({v, 0, c, (int)adj[v].size()});
+			adj[v].push_back({u, c, c, (int)adj[u].size() - 1});
+		}
+
+		int maxFlow(int s, int t) {
+			if (s == t)
+				return 0;
+			int total = 0, flow;
+			while (bfs(s, t)) {
+				vector<int> start(n);
+				while ((flow = dfs(s, INT32_MAX, t, start))) {
+					total += flow;
+				}
+			}
+			return total;
+		}
+
+	  private:
+		bool bfs(int s, int t) {
+			level.assign(n, -1);
+			level[s] = 0;
+			queue<int> q;
+			q.push(s);
+			while (!q.empty()) {
+				int u = q.front();
+				q.pop();
+				for (auto& e : adj[u]) {
+					if (level[e.v] == -1 && e.flow < e.cap) {
+						level[e.v] = level[u] + 1;
+						q.push(e.v);
+					}
+				}
+			}
+			return level[t] != -1;
+		}
+
+		int dfs(int u, int flow, int t, vector<int>& start) {
+			if (u == t)
+				return flow;
+			for (; start[u] < int(adj[u].size()); ++start[u]) {
+				Edge& e = adj[u][start[u]];
+				if (level[e.v] == level[u] + 1 && e.flow < e.cap) {
+					int newFlow = min(flow, e.cap - e.flow);
+					int augFlow = dfs(e.v, newFlow, t, start);
+					if (augFlow > 0) {
+						e.flow += augFlow;
+						adj[e.v][e.rev].flow -= augFlow;
+						return augFlow;
+					}
+				}
+			}
+			return 0;
+		}
+	};
+
+snippet segtree Segment Tree 
+    int n;
+    vector<int> tree;
+
+    void build() {
+        for (int i = n - 1; i > 0; --i) {
+            tree[i] = tree[i << 1] + tree[i << 1 | 1];
+        }
+    }
+
+    void modify(int p, int v) {
+        tree[p += n] += v;
+        for (; p > 1; p >>= 1) {
+            tree[p >> 1] = tree[p] + tree[p ^ 1];
+        }
+    }
+
+    int query(int l, int r) {
+        int res = 0;
+        for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
+            if (l & 1) res += tree[l++];
+            if (r & 1) res += tree[--r];
+        }
+        return res;
+    }
