@@ -97,17 +97,23 @@ return {
   },
   {
     'MeanderingProgrammer/render-markdown.nvim',
-    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      -- 'echasnovski/mini.nvim',
+      'nvim-tree/nvim-web-devicons',
+    },
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
     opts = {
       heading = {
-        backgrounds = {},
+        -- backgrounds = {},
+      },
+      bullet = {
+        highlight = '',
       },
       code = {
-        -- style = 'language',
-        -- position = 'right',
         border = 'thick',
+        -- highlight_inline = ''
       },
       pipe_table = {
         preset = 'round',

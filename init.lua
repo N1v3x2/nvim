@@ -92,12 +92,19 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-vim.keymap.set('n', '<C-q>', function()
-  vim.cmd 'w!'
-  vim.cmd 'bd!'
-end, { desc = 'Delete current buffer' })
 
+vim.keymap.set('n', '<leader>t', '<Cmd>new +term<CR>', { desc = 'New terminal window (below)' })
+vim.keymap.set('n', '<leader>tv', '<Cmd>vert term<CR>', { desc = 'New terminal window (right)' })
+
+vim.keymap.set('n', '<C-q>', '<Cmd>bd!<CR>', { desc = 'Delete current buffer' })
 vim.keymap.set('n', '<C-y>', '<Cmd>%y<CR>', { desc = 'Yank entire file' })
+
+vim.keymap.set('n', '<leader>ts', '<Cmd>tab split<CR>', { desc = '[T]ab [S]plit' })
+
+vim.keymap.set('n', '[[', '?{<CR>w99[{', { remap = true })
+vim.keymap.set('n', '][', '/}<CR>b99]}', { remap = true })
+vim.keymap.set('n', ']]', 'j0[[%/{<CR>', { remap = true })
+vim.keymap.set('n', '[]', 'k$][%?}<CR>', { remap = true })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -124,18 +131,22 @@ vim.api.nvim_create_autocmd('TermOpen', {
 
 local servers = {
   'bashls',
+  'buf_ls',
   'clangd',
-  'cmake',
   'cssls',
   'docker_compose_language_service',
   'dockerls',
   'eslint',
   'graphql',
   'html',
+  'jdtls',
   'jsonls',
-  'buf_ls',
-  'pylsp',
+  'lemminx',
   'lua_ls',
+  'markdown_oxide',
+  'pylsp',
+  'texlab',
+  'ts_ls',
 }
 vim.lsp.enable(servers)
 
@@ -152,28 +163,22 @@ vim.keymap.set('n', 'grr', vim.lsp.buf.references, { desc = 'vim.lsp.buf.referen
 vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'vim.lsp.buf.definition()' })
 vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, { desc = 'vim.lsp.buf.type_definition()' })
 
-require('custom.lsp.lsp_hover').setup()
--- vim.api.nvim_create_autocmd('LspAttach', {
---   callback = function(event)
---     vim.keymap.set('n', 'K', function()
---       vim.lsp.buf.hover {
---         border = 'rounded',
---       }
---     end, { buffer = event.buf })
---   end,
--- })
--- vim.api.nvim_create_autocmd('ColorScheme', {
---   callback = function()
---     -- TODO: Figure out if it's possible to change the background color for LSP hover windows without affecting every hover window
---     vim.api.nvim_set_hl(0, 'NormalFloat', { link = 'Normal' }) -- Background of hover window
---     vim.api.nvim_set_hl(0, 'FloatBorder', { link = 'DiagnosticInfo' }) -- Border color
---   end,
--- })
+-- TODO: figure out what @function means
+require('custom.lsp.lsp_hover').setup {
+  ['^clangd'] = {
+    name = ' clangd',
+    border_hl = '@function',
+  },
+  ['^pylsp'] = {
+    name = '󰌠 pylsp',
+    border_hl = '@function',
+  },
+}
 --
 -- LSP config
 vim.diagnostic.config {
   severity_sort = true,
-  virtual_lines = true,
+  virtual_lines = { current_line = true },
   float = {
     border = 'rounded',
     source = 'if_many',
@@ -188,19 +193,6 @@ vim.diagnostic.config {
     },
   } or {},
   virtual_text = false,
-  -- virtual_text = {
-  --   source = 'if_many',
-  --   spacing = 2,
-  --   format = function(diagnostic)
-  --     local diagnostic_message = {
-  --       [vim.diagnostic.severity.ERROR] = diagnostic.message,
-  --       [vim.diagnostic.severity.WARN] = diagnostic.message,
-  --       [vim.diagnostic.severity.INFO] = diagnostic.message,
-  --       [vim.diagnostic.severity.HINT] = diagnostic.message,
-  --     }
-  --     return diagnostic_message[diagnostic.severity]
-  --   end,
-  -- },
 }
 
 -- [[ Install `lazy.nvim` plugin manager ]]
@@ -826,12 +818,14 @@ require('lazy').setup({
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
-      -- 'hrsh7th/cmp-nvim-lsp-signature-help',
+      'onsails/lspkind.nvim',
+      'hrsh7th/cmp-nvim-lsp-signature-help',
     },
     config = function()
       -- See `:help cmp`
       local cmp = require 'cmp'
       local luasnip = require 'luasnip'
+      local lspkind = require 'lspkind'
       luasnip.config.setup {}
 
       -- Disable built-in LSP hover window so it doesn't overlap with nvim-cmp
@@ -846,6 +840,28 @@ require('lazy').setup({
           end,
         },
         completion = { completeopt = 'menu,menuone,noinsert' },
+        formatting = {
+          fields = { 'kind', 'abbr', 'menu' },
+          format = lspkind.cmp_format {
+            mode = 'symbol', -- show only symbol annotations
+            maxwidth = {
+              -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+              -- can also be a function to dynamically calculate max width such as
+              -- menu = function() return math.floor(0.45 * vim.o.columns) end,
+              menu = 50, -- leading text (labelDetails)
+              abbr = 50, -- actual suggestion item
+            },
+            ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+            show_labelDetails = true, -- show labelDetails in menu. Disabled by default
+
+            -- The function below will be called before any actual modifications from lspkind
+            -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
+            before = function(entry, vim_item)
+              -- ...
+              return vim_item
+            end,
+          },
+        },
 
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
@@ -871,20 +887,27 @@ require('lazy').setup({
           end, { 'i', 's' }),
         },
         sources = {
-          { name = 'nvim_lsp' },
+          {
+            name = 'nvim_lsp',
+            option = {
+              markdown_oxide = {
+                keyword_pattern = [[\(\k\| \|\/\|#\)\+]],
+              },
+            },
+          },
           { name = 'luasnip' },
           { name = 'path' },
           { name = 'render-markdown' },
+          { name = 'nvim_lsp_signature_help' },
         },
         window = {
           completion = cmp.config.window.bordered {
             border = 'rounded',
-            winhighlight = 'FloatBorder:Comment',
-            -- winhighlight = 'Normal:Normal,FloatBorder:DiagnosticInfo',
+            winhighlight = 'Normal:Normal,FloatBorder:Comment,CursorLine:TelescopeSelection',
           },
           documentation = cmp.config.window.bordered {
             border = 'rounded',
-            winhighlight = 'FloatBorder:Comment',
+            winhighlight = 'Normal:Normal,FloatBorder:Comment',
           },
         },
       }
@@ -967,6 +990,7 @@ require('lazy').setup({
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    -- dependencies = { 'OXY2DEV/markview.nvim' },
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`

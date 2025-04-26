@@ -70,8 +70,6 @@ end
 ---@param h integer
 ---@return [ "left" | "right" | "center", "top" | "bottom" | "center" ]
 local function get_quadrant(w, h)
-  ---+${lua}
-
   ---@type integer
   local window = vim.api.nvim_get_current_win()
   ---@type [ integer, integer ]
@@ -119,7 +117,6 @@ local function get_quadrant(w, h)
   end
 
   return { x, y }
-  ---_
 end
 
 ---@type integer? LSP hover buffer.
@@ -130,8 +127,6 @@ lsp_hover.window = nil
 --- Initializes the hover buffer & window.
 ---@param config table
 lsp_hover.__init = function(config)
-  ---+${lua}
-
   if not config then
     return
   end
@@ -165,8 +160,6 @@ end
 ---@param context table Context for this hover.
 ---@param _ table Hover config(we won't use this).
 lsp_hover.hover = function(error, result, context, _)
-  ---+${lua}
-
   if error then
     --- Emit error message.
     vim.api.nvim_echo({
@@ -175,6 +168,8 @@ lsp_hover.hover = function(error, result, context, _)
       { error.message, 'Comment' },
     }, true, {})
   end
+
+  vim.cmd 'set winhighlight=Normal:Normal'
 
   if lsp_hover.window and vim.api.nvim_win_is_valid(lsp_hover.window) then
     --- If Hover window is active then switch to that
@@ -186,7 +181,7 @@ lsp_hover.hover = function(error, result, context, _)
     --- Buffer was changed before the request was
     --- resolved.
     return
-  elseif not result or not result.contents then
+  elseif not result or not result.contents or (type(result.contents) == 'string' and string.len(result.contents) == 0) then
     --- No result.
     vim.api.nvim_echo({
       { '  Lsp hover: ', 'DiagnosticVirtualTextInfo' },
@@ -200,13 +195,57 @@ lsp_hover.hover = function(error, result, context, _)
   local lines = {}
   local ft
 
-  if type(result.contents) == 'table' and result.contents.kind == 'plaintext' then
-    ft = 'text'
-  else
-    ft = 'markdown'
-  end
+  local contents = result.contents
 
-  lines = vim.split(result.contents.value or '', '\n', { trimempty = true })
+  if type(contents) == 'string' then
+    lines = vim.split(contents, '\n', { trimempty = true })
+    ft = 'markdown'
+  elseif type(contents) == 'table' then
+    if contents.kind then
+      -- MarkupContent
+      lines = vim.split(contents.value or '', '\n', { trimempty = true })
+      ft = contents.kind == 'plaintext' and 'text' or 'markdown'
+    else
+      -- MarkedString[] (Java)
+      lines = {}
+      local has_lines = false
+      for _, item in ipairs(contents) do
+        has_lines = true
+        if type(item) == 'string' then
+          vim.list_extend(lines, vim.split(item, '\n', { trimempty = true }))
+        elseif type(item) == 'table' then
+          -- Java provides the method/class name here
+          local header = {
+            '```java',
+            item.value,
+            '```',
+          }
+          vim.list_extend(lines, header)
+        end
+      end
+
+      -- For some reason, the `ipairs(contents)` will be an empty iterable even though there is stuff to show
+      if not has_lines then
+        if not contents.value then
+          vim.api.nvim_echo({
+            { '  Lsp hover: ', 'DiagnosticVirtualTextInfo' },
+            { ' ' },
+            { 'No information available!', 'Comment' },
+          }, true, {})
+          return
+        end
+
+        local header = {
+          '```java',
+          contents.value,
+          '```',
+        }
+        vim.list_extend(lines, header)
+      end
+
+      ft = 'markdown'
+    end
+  end
 
   ---@type integer LSP client ID.
   local client_id = context.client_id
@@ -324,8 +363,6 @@ end
 --- Setup function.
 ---@param config { default: hover.opts, [string]: hover.opts } | nil
 lsp_hover.setup = function(config)
-  ---+${lua}
-
   if config then
     lsp_hover.config = vim.tbl_deep_extend('force', lsp_hover.config, config)
   end
