@@ -2,92 +2,75 @@
 local lsp_hover = {}
 
 ---@class hover.opts
----
 ---@field border_hl? string Highlight group for the window borders.
----@field name_hl? string Highlight group for the `name`. Defaults to `border_hl`.
----@field name string
----
----@field min_width? integer
----@field max_width? integer
----
----@field min_height? integer
+---@field icon string
 ---@field max_height? integer
+---@field max_width? integer
+---@field min_height? integer
+---@field min_width? integer
+---@field name string
 
---- Configuration for lsp_hovers from different
---- servers.
----
+--- Configuration for lsp_hovers from different servers
 ---@type { default: hover.opts, [string]: hover.opts }
 lsp_hover.config = {
   default = {
-    border_hl = 'Comments',
-    name = '󰗊 LSP/Hover',
-
+    icon = ' ',
     min_width = 20,
     max_width = math.floor(vim.o.columns * 0.75),
 
     min_height = 1,
     max_height = math.floor(vim.o.lines * 0.5),
   },
-
-  ['^lua_ls'] = {
-    name = ' LuaLS',
-    border_hl = '@function',
-  },
 }
 
---- Finds matching configuration.
---- NOTE: The output is the merge of the {config} and {default}.
----@param str string
+--- Finds matching configuration for the provided LSP and merges that with the default config.
+---@param lsp_name string
 ---@return hover.opts
-local match = function(str)
+local match = function(lsp_name)
   local ignore = { 'default' }
   local config = lsp_hover.config.default or {}
 
   ---@type string[]
   local keys = vim.tbl_keys(lsp_hover.config)
-
-  --- Sorting is nice in-case the same pattern can
-  --- match multiple servers.
   table.sort(keys)
 
   for _, k in ipairs(keys) do
-    if vim.list_contains(ignore, k) == false and string.match(str, k) then
+    if vim.list_contains(ignore, k) == false and string.match(lsp_name, k) then
       return vim.tbl_extend('force', config, lsp_hover.config[k])
     end
   end
+
+  config.name = lsp_name
+  config.border_hl = '@variable'
 
   return config
 end
 
 --- Get which quadrant to open the window on.
 ---
---- ```txt
+--- ```
 ---    top, left ↑ top, right
 ---            ← █ →
 --- bottom, left ↓ bottom, right
 --- ```
 ---@param w integer
 ---@param h integer
----@return [ "left" | "right" | "center", "top" | "bottom" | "center" ]
+---@return ['left'|'right'|'center', 'top'|'bottom'|'center']
 local function get_quadrant(w, h)
-  ---@type integer
   local window = vim.api.nvim_get_current_win()
-  ---@type [ integer, integer ]
   local src_c = vim.api.nvim_win_get_cursor(window)
 
   --- (Terminal) Screen position.
   ---@class screen.pos
-  ---
   ---@field row integer Screen row.
   ---@field col integer First screen column.
   ---@field endcol integer Last screen column.
-  ---
   ---@field curscol integer Cursor screen column.
   local scr_p = vim.fn.screenpos(window, src_c[1], src_c[2])
 
   ---@type integer, integer Vim's width & height.
   local vW, vH = vim.o.columns, vim.o.lines - (vim.o.cmdheight or 0)
-  ---@type "left" | "right", "top" | "bottom"
+  ---@type 'left'|'right', 'bottom'|'top'
   local x, y
 
   if scr_p.curscol - w <= 0 then
@@ -158,7 +141,7 @@ end
 ---@param error table Error.
 ---@param result table Result of the hover.
 ---@param context table Context for this hover.
----@param _ table Hover config(we won't use this).
+---@param _ table Hover config (we won't use this).
 lsp_hover.hover = function(error, result, context, _)
   if error then
     --- Emit error message.
@@ -224,7 +207,6 @@ lsp_hover.hover = function(error, result, context, _)
         end
       end
 
-      -- For some reason, the `ipairs(contents)` will be an empty iterable even though there is stuff to show
       if not has_lines then
         if not contents.value then
           vim.api.nvim_echo({
@@ -235,6 +217,7 @@ lsp_hover.hover = function(error, result, context, _)
           return
         end
 
+        -- For some reason, `ipairs(contents)` will be an empty iterable even though there is stuff to show
         local header = {
           '```java',
           contents.value,
@@ -255,22 +238,33 @@ lsp_hover.hover = function(error, result, context, _)
   ---@type hover.opts
   local config = match(client.name)
 
-  local w = config.min_width or 20
+  -- Set highlight group of hover window
+  local hl = vim.treesitter.get_captures_at_cursor(0)
+  if #hl > 0 then
+    local capture = hl[#hl]
+    config.border_hl = '@' .. capture
+    config.name = capture
+  end
+
+  local w = math.max(config.min_width or 20, vim.fn.strdisplaywidth(config.name) + 6)
   local h = config.min_height or 1
 
   local max_height = config.max_height or 10
   local max_width = config.max_width or 60
 
+  local n_lines = 0
   for _, line in ipairs(lines) do
     if vim.fn.strdisplaywidth(line) >= max_width then
       w = max_width
-      break
     elseif vim.fn.strdisplaywidth(line) > w then
       w = vim.fn.strdisplaywidth(line)
     end
   end
 
-  h = math.max(math.min(#lines, max_height), h)
+  for _, line in ipairs(lines) do
+    n_lines = n_lines + math.ceil(math.max(1, vim.fn.strdisplaywidth(line)) / w)
+  end
+  h = math.max(math.min(n_lines, max_height), h)
 
   --- Window configuration.
   local win_conf = {
@@ -284,29 +278,29 @@ lsp_hover.hover = function(error, result, context, _)
     style = 'minimal',
 
     footer = {
-      { '╼ ', config.border_hl or 'FloatBorder' },
-      { config.name, config.name_hl or config.border_hl or 'FloatBorder' },
-      { ' ╾', config.border_hl or 'FloatBorder' },
+      { '╼ ', config.border_hl },
+      { config.icon, config.border_hl },
+      { config.name, config.border_hl },
+      { ' ╾', config.border_hl },
     },
     footer_pos = 'right',
   }
 
   --- Window borders.
   local border = {
-    { '╭', config.border_hl or 'FloatBorder' },
-    { '─', config.border_hl or 'FloatBorder' },
-    { '╮', config.border_hl or 'FloatBorder' },
+    { '╭', config.border_hl },
+    { '─', config.border_hl },
+    { '╮', config.border_hl },
 
-    { '│', config.border_hl or 'FloatBorder' },
-    { '╯', config.border_hl or 'FloatBorder' },
-    { '─', config.border_hl or 'FloatBorder' },
+    { '│', config.border_hl },
+    { '╯', config.border_hl },
+    { '─', config.border_hl },
 
-    { '╰', config.border_hl or 'FloatBorder' },
-    { '│', config.border_hl or 'FloatBorder' },
+    { '╰', config.border_hl },
+    { '│', config.border_hl },
   }
 
   --- Which quadrant to open the window on.
-  ---@type [ "left" | "right" | "center", "top" | "bottom" | "center" ]
   local quad = get_quadrant(w + 2, h + 2)
 
   if quad[1] == 'left' then
@@ -352,12 +346,6 @@ lsp_hover.hover = function(error, result, context, _)
 
   vim.wo[lsp_hover.window].wrap = true
   vim.wo[lsp_hover.window].linebreak = true
-
-  if package.loaded['markview'] and package.loaded['markview'].render then
-    --- If markview is available use it to render stuff.
-    --- This is for `v25`.
-    require('markview').render(lsp_hover.buffer, { enable = true, hybrid_mode = false })
-  end
 end
 
 --- Setup function.
@@ -379,15 +367,14 @@ lsp_hover.setup = function(config)
     })
   end
 
-  --- TODO, maybe we should remove this.
-  --- Set-up the new provider.
+  -- Set-up the new provider.
   vim.lsp.handlers['textDocument/hover'] = lsp_hover.hover
 
   vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
     callback = function(event)
       if event.buf == lsp_hover.buffer then
-        --- Don't do anything if the current buffer
-        --- is the hover buffer.
+        -- Don't do anything if the current buffer
+        -- is the hover buffer.
         return
       elseif lsp_hover.window and vim.api.nvim_win_is_valid(lsp_hover.window) then
         pcall(vim.api.nvim_win_close, lsp_hover.window, true)

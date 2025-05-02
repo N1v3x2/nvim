@@ -1,22 +1,24 @@
 extends c
 
-snippet csce430 Competitive Programming Boilerplate
-	#include <bits/stdc++.h>
-	using namespace std;
-	using ll = long long;
-	using pii = pair<int, int>;
-	constexpr char nl = '\n';
+snippet cp Competitive Programming Boilerplate
+    #include <bits/stdc++.h>
+    #define pb push_back
+    using namespace std;
+    using ll = long long;
+    using pii = pair<int, int>;
+    using vi = vector<int>;
+    constexpr char nl = '\n';
 
-	$1
+    $1
 
-	int main() {
-		ios_base::sync_with_stdio(false);
-		cin.tie(NULL);
+    int main() {
+        ios_base::sync_with_stdio(false);
+        cin.tie(NULL);
 
-		$0
-	}
+        $0
+    }
 
-snippet orderedset GNU PBDS Order Statistic Tree
+snippet ordset GNU PBDS Order Statistic Tree
 	#include <ext/pb_ds/assoc_container.hpp>
 	using namespace __gnu_pbds;
 
@@ -65,8 +67,8 @@ snippet dinics Dinics Algorithm (Max Flow)
 		Dinics(int n) : n(n) { adj.assign(n, {}); }
 
 		void addEdge(int u, int v, int c) {
-			adj[u].push_back({v, 0, c, (int)adj[v].size()});
-			adj[v].push_back({u, c, c, (int)adj[u].size() - 1});
+			adj[u].pb({v, 0, c, (int)adj[v].size()});
+			adj[v].pb({u, c, c, (int)adj[u].size() - 1});
 		}
 
 		int maxFlow(int s, int t) {
@@ -75,7 +77,7 @@ snippet dinics Dinics Algorithm (Max Flow)
 			int total = 0, flow;
 			while (bfs(s, t)) {
 				vector<int> start(n);
-				while ((flow = dfs(s, INT32_MAX, t, start))) {
+				while ((flow = dfs(s, INT_MAX, t, start))) {
 					total += flow;
 				}
 			}
@@ -145,3 +147,57 @@ snippet segtree Segment Tree
         }
         return res;
     }
+
+snippet ek Edmonds Karp
+    class EK {
+      private:
+        int n;
+        vector<vi> cap, adj;
+
+      public:
+        EK(int n) : n(n), cap(n, vi(n)), adj(n) {}
+
+        void add(int u, int v, int c) {
+            adj[u].pb(v);
+            adj[v].pb(u);
+            cap[u][v] = c;
+        }
+
+        int maxFlow(int s, int t) {
+            vi prev(n);
+            int tot = 0, f;
+            while ((f = bfs(s, t, prev))) {
+                tot += f;
+                int v = t;
+                while (v != s) {
+                    int u = prev[v];
+                    cap[u][v] -= f;
+                    cap[v][u] += f;
+                    v = u;
+                }
+            }
+            return tot;
+        }
+
+      private:
+        int bfs(int s, int t, vi& prev) {
+            fill(prev.begin(), prev.end(), -1);
+            prev[s] = -2;
+            queue<pii> q;
+            q.push({s, INT_MAX});
+            while (!q.empty()) {
+                auto [u, f] = q.front();
+                q.pop();
+                for (auto v : adj[u]) {
+                    if (prev[v] == -1 && cap[u][v] > 0) {
+                        int nf = min(f, cap[u][v]);
+                        prev[v] = u;
+                        if (v == t)
+                            return nf;
+                        q.push({v, nf});
+                    }
+                }
+            }
+            return 0;
+        }
+    };
