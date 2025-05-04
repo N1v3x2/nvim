@@ -143,7 +143,6 @@ local servers = {
   'json-lsp',
   'lemminx',
   'lua-language-server',
-  -- 'markdown-oxide',
   'python-lsp-server',
   'texlab',
   'typescript-language-server',
@@ -404,51 +403,30 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
         },
         opts = {},
       },
       'folke/lazydev.nvim',
     },
+    init = function()
+      require('luasnip.loaders.from_snipmate').lazy_load()
+    end,
+
     --- @module 'blink.cmp'
     --- @type blink.cmp.Config
     opts = {
       keymap = {
-        -- 'default' (recommended) for mappings similar to built-in completions
-        --   <c-y> to accept ([y]es) the completion.
-        --    This will auto-import if your LSP supports it.
-        --    This will expand snippets if the LSP sent a snippet.
-        -- 'super-tab' for tab to accept
-        -- 'enter' for enter to accept
-        -- 'none' for no mappings
-        --
-        -- For an understanding of why the 'default' preset is recommended,
-        -- you will need to read `:help ins-completion`
-        --
-        -- No, but seriously. Please read `:help ins-completion`, it is really good!
-        --
-        -- All presets have the following mappings:
-        -- <tab>/<s-tab>: move to right/left of your snippet expansion
-        -- <c-space>: Open menu or open docs if already open
-        -- <c-n>/<c-p> or <up>/<down>: Select next/previous item
-        -- <c-e>: Hide menu
-        -- <c-k>: Toggle signature help
-        --
-        -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'enter',
-
         ['<Tab>'] = { 'select_next', 'fallback' },
         ['<S-Tab>'] = { 'select_prev', 'fallback' },
         ['<C-l>'] = { 'snippet_forward', 'fallback' },
         ['<C-h>'] = { 'snippet_backward', 'fallback' },
-
-        -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
-        --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
       },
 
       appearance = {
@@ -469,7 +447,7 @@ require('lazy').setup({
         ghost_text = { enabled = true },
         menu = {
           border = 'rounded',
-          winhighlight = 'Normal:Normal,FloatBorder:Comment,CursorLine:TelescopeSelection',
+          winhighlight = 'Normal:Normal,PmenuExtra:Normal,FloatBorder:Comment,CursorLine:TelescopeSelection',
         },
       },
 
@@ -492,147 +470,15 @@ require('lazy').setup({
       fuzzy = { implementation = 'lua' },
 
       -- Shows a signature help window while you type arguments for a function
-      signature = { enabled = true },
+      signature = {
+        enabled = true,
+        window = {
+          border = 'rounded',
+          winhighlight = 'Normal:Normal,FloatBorder:Comment',
+        },
+      },
     },
   },
-
-  -- TODO: migrate to blink.nvim
-  -- { -- Autocompletion
-  --   'hrsh7th/nvim-cmp',
-  --   event = 'InsertEnter',
-  --   dependencies = {
-  --     -- Snippet Engine & its associated nvim-cmp source
-  --     {
-  --       'L3MON4D3/LuaSnip',
-  --       build = (function()
-  --         -- Build Step is needed for regex support in snippets.
-  --         -- This step is not supported in many windows environments.
-  --         -- Remove the below condition to re-enable on windows.
-  --         if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-  --           return
-  --         end
-  --         return 'make install_jsregexp'
-  --       end)(),
-  --       dependencies = {
-  --         -- `friendly-snippets` contains a variety of premade snippets.
-  --         --    See the README about individual language/framework/plugin snippets:
-  --         --    https://github.com/rafamadriz/friendly-snippets
-  --         -- {
-  --         --   'rafamadriz/friendly-snippets',
-  --         --   config = function()
-  --         --     require('luasnip.loaders.from_vscode').lazy_load()
-  --         --   end,
-  --         -- },
-  --       },
-  --       config = function()
-  --         -- User snippet files
-  --         require('luasnip.loaders.from_snipmate').lazy_load()
-  --         require('luasnip').setup()
-  --       end,
-  --     },
-  --     'saadparwaiz1/cmp_luasnip',
-  --
-  --     -- Adds other completion capabilities.
-  --     --  nvim-cmp does not ship with all sources by default. They are split
-  --     --  into multiple repos for maintenance purposes.
-  --     'hrsh7th/cmp-nvim-lsp',
-  --     'hrsh7th/cmp-path',
-  --     'onsails/lspkind.nvim',
-  --     'hrsh7th/cmp-nvim-lsp-signature-help',
-  --   },
-  --   config = function()
-  --     -- See `:help cmp`
-  --     local cmp = require 'cmp'
-  --     local luasnip = require 'luasnip'
-  --     local lspkind = require 'lspkind'
-  --     luasnip.config.setup {}
-  --
-  --     -- Disable built-in LSP hover window so it doesn't overlap with nvim-cmp
-  --     vim.lsp.handlers['textDocument/hover'] = function() end
-  --
-  --     ---@diagnostic disable: undefined-field
-  --     ---@diagnostic disable-next-line: redundant-parameter
-  --     cmp.setup {
-  --       snippet = {
-  --         expand = function(args)
-  --           luasnip.lsp_expand(args.body)
-  --         end,
-  --       },
-  --       completion = { completeopt = 'menu,menuone,noinsert' },
-  --       formatting = {
-  --         fields = { 'kind', 'abbr', 'menu' },
-  --         format = lspkind.cmp_format {
-  --           mode = 'symbol', -- show only symbol annotations
-  --           maxwidth = {
-  --             -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-  --             -- can also be a function to dynamically calculate max width such as
-  --             -- menu = function() return math.floor(0.45 * vim.o.columns) end,
-  --             menu = 50, -- leading text (labelDetails)
-  --             abbr = 50, -- actual suggestion item
-  --           },
-  --           ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
-  --           show_labelDetails = true, -- show labelDetails in menu. Disabled by default
-  --
-  --           -- The function below will be called before any actual modifications from lspkind
-  --           -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
-  --           before = function(entry, vim_item)
-  --             -- ...
-  --             return vim_item
-  --           end,
-  --         },
-  --       },
-  --
-  --       -- For an understanding of why these mappings were
-  --       -- chosen, you will need to read `:help ins-completion`
-  --       --
-  --       -- No, but seriously. Please read `:help ins-completion`, it is really good!
-  --       mapping = cmp.mapping.preset.insert {
-  --         ['<C-b>'] = cmp.mapping.scroll_docs(-5),
-  --         ['<C-f>'] = cmp.mapping.scroll_docs(4),
-  --         ['<CR>'] = cmp.mapping.confirm { select = true },
-  --
-  --         ['<Tab>'] = cmp.mapping.select_next_item(),
-  --         ['<S-Tab>'] = cmp.mapping.select_prev_item(),
-  --
-  --         ['<C-l>'] = cmp.mapping(function()
-  --           if luasnip.expand_or_locally_jumpable() then
-  --             luasnip.expand_or_jump()
-  --           end
-  --         end, { 'i', 's' }),
-  --         ['<C-h>'] = cmp.mapping(function()
-  --           if luasnip.locally_jumpable(-1) then
-  --             luasnip.jump(-1)
-  --           end
-  --         end, { 'i', 's' }),
-  --       },
-  --       sources = {
-  --         {
-  --           name = 'nvim_lsp',
-  --           option = {
-  --             markdown_oxide = {
-  --               keyword_pattern = [[\(\k\| \|\/\|#\)\+]],
-  --             },
-  --           },
-  --         },
-  --         { name = 'luasnip' },
-  --         { name = 'path' },
-  --         { name = 'render-markdown' },
-  --         { name = 'nvim_lsp_signature_help' },
-  --       },
-  --       window = {
-  --         completion = cmp.config.window.bordered {
-  --           border = 'rounded',
-  --           winhighlight = 'Normal:Normal,FloatBorder:Comment,CursorLine:TelescopeSelection',
-  --         },
-  --         documentation = cmp.config.window.bordered {
-  --           border = 'rounded',
-  --           winhighlight = 'Normal:Normal,FloatBorder:Comment',
-  --         },
-  --       },
-  --     }
-  --     ---@diagnostic enable: undefined-field
-  --   end,
-  -- },
 
   -- Colorscheme
   {
@@ -685,6 +531,7 @@ require('lazy').setup({
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
+
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     -- dependencies = { 'OXY2DEV/markview.nvim' },
@@ -723,8 +570,7 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
@@ -761,5 +607,4 @@ require('lazy').setup({
   },
 })
 
--- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
