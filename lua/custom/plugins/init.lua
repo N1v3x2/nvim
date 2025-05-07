@@ -39,17 +39,17 @@ return {
       end, { desc = '[N]otifier [H]istory' })
     end,
     opts = {
-      bigfile = { enable = true },
-      dashboard = { enable = true },
-      indent = { enable = true },
-      input = { enable = true },
-      lazygit = { enable = true },
-      notifier = { enable = true },
-      quickfile = { enable = true },
-      scope = { enable = true },
-      scroll = { enable = true },
-      statuscolumn = { enable = true },
-      words = { enable = true },
+      bigfile = {},
+      dashboard = {},
+      indent = {},
+      input = {},
+      lazygit = {},
+      notifier = {},
+      quickfile = {},
+      scope = {},
+      scroll = {},
+      statuscolumn = {},
+      words = {},
     },
   },
   {
@@ -141,8 +141,14 @@ return {
   },
   {
     'sphamba/smear-cursor.nvim',
-    opts = {
-      -- cursor_color = 'none',
-    },
+    opts = {},
+  },
+  {
+    'vimpostor/vim-tpipeline',
+    config = function()
+      vim.g.tpipeline_focuslost = 0
+      vim.g.tpipeline_fillcentre = 1
+      vim.g.tpipeline_restore = 1
+    end,
   },
 }
