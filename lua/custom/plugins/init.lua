@@ -8,7 +8,6 @@ return {
     lazy = false, -- we don't want to lazy load VimTeX
     -- tag = "v2.15", -- uncomment to pin to a specific release
     init = function()
-      -- VimTeX configuration goes here, e.g.
       vim.g.vimtex_view_method = 'zathura'
       vim.g.vimtex_view_zathura_use_synctex = 0
     end,
@@ -146,9 +145,22 @@ return {
   {
     'vimpostor/vim-tpipeline',
     config = function()
-      vim.g.tpipeline_focuslost = 0
       vim.g.tpipeline_fillcentre = 1
-      vim.g.tpipeline_restore = 1
+      vim.g.tpipeline_clearstl = 1
     end,
+  },
+  {
+    'aserowy/tmux.nvim',
+    init = function()
+      vim.keymap.set('n', '<C-n>', function()
+        require('tmux').next_window()
+      end, { noremap = true, silent = true })
+      vim.keymap.set('n', '<C-p>', function()
+        require('tmux').previous_window()
+      end, { noremap = true, silent = true })
+    end,
+    opts = {
+      copy_sync = { enable = false },
+    },
   },
 }

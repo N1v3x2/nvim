@@ -1,0 +1,18 @@
+return {
+  'bash-language-server',
+  'buf',
+  'clangd',
+  'css-lsp',
+  'docker-compose-language-service',
+  'dockerfile-language-server',
+  'eslint-lsp',
+  'graphql-language-service-cli',
+  'html-lsp',
+  'jdtls',
+  'json-lsp',
+  'lemminx',
+  'lua-language-server',
+  'python-lsp-server',
+  'texlab',
+  'typescript-language-server',
+}
