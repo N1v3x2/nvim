@@ -5,7 +5,7 @@ return {
     { 'williamboman/mason.nvim', opts = {} },
   },
   config = function()
-    local servers = require 'servers'
+    local servers = require 'config.lsp.servers'
     local ensure_installed = servers
     vim.list_extend(ensure_installed, {
       'stylua',
