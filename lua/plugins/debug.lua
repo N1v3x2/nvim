@@ -20,14 +20,6 @@ return {
     'jay-babu/mason-nvim-dap.nvim',
   },
   keys = {
-    -- Basic debugging keymaps, feel free to change to your liking!
-    {
-      '<F5>',
-      function()
-        require('dap').continue()
-      end,
-      desc = 'Debug: Start/Continue',
-    },
     {
       '<F1>',
       function()
@@ -50,6 +42,34 @@ return {
       desc = 'Debug: Step Out',
     },
     {
+      '<F4>',
+      function()
+        require('dap').terminate()
+      end,
+      desc = 'Debug: Terminate',
+    },
+    {
+      '<F5>',
+      function()
+        require('dap').continue()
+      end,
+      desc = 'Debug: Start/Continue',
+    },
+    {
+      '<F6>',
+      function()
+        require('dapui').toggle()
+      end,
+      desc = 'Debug: See last session result',
+    },
+    {
+      '<F8>',
+      function()
+        require('dapui').restart()
+      end,
+      desc = 'Debug: Restart current session',
+    },
+    {
       '<leader>b',
       function()
         require('dap').toggle_breakpoint()
@@ -63,13 +83,12 @@ return {
       end,
       desc = 'Debug: Set Breakpoint',
     },
-    -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
     {
-      '<F6>',
+      '<leader>c',
       function()
-        require('dapui').toggle()
+        require('dap').clear_breakpoints()
       end,
-      desc = 'Debug: See last session result.',
+      desc = 'Debug: Clear Breakpoints',
     },
   },
   config = function()
