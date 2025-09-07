@@ -63,7 +63,7 @@ return {
       desc = 'Debug: See last session result',
     },
     {
-      '<F8>',
+      '<leader>r',
       function()
         require('dapui').restart()
       end,
