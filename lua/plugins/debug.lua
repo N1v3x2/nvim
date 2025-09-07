@@ -65,7 +65,7 @@ return {
     {
       '<leader>r',
       function()
-        require('dapui').restart()
+        require('dap').restart()
       end,
       desc = 'Debug: Restart current session',
     },
