@@ -6,6 +6,7 @@ return {
   'docker-compose-language-service',
   'dockerfile-language-server',
   'eslint-lsp',
+  'gopls',
   'gradle-language-server',
   'graphql-language-service-cli',
   'html-lsp',
