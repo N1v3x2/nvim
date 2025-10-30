@@ -9,10 +9,17 @@ vim.opt.number = true
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
 
--- Sync clipboard between OS and Neovim.
-vim.schedule(function()
-  vim.opt.clipboard = 'unnamedplus'
-end)
+vim.g.clipboard = {
+  name = 'OSC 52',
+  copy = {
+    ['+'] = require('vim.ui.clipboard.osc52').copy '+',
+    ['*'] = require('vim.ui.clipboard.osc52').copy '*',
+  },
+  paste = {
+    ['+'] = require('vim.ui.clipboard.osc52').paste '+',
+    ['*'] = require('vim.ui.clipboard.osc52').paste '*',
+  },
+}
 
 vim.opt.breakindent = true
 
@@ -42,3 +49,5 @@ vim.opt.inccommand = 'split'
 vim.opt.cursorline = true
 
 vim.opt.scrolloff = 10
+
+vim.opt.termguicolors = true
