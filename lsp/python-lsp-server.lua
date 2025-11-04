@@ -11,6 +11,10 @@ return {
           enabled = true, -- Enable the plugin
           formatEnabled = true, -- Enable formatting using ruffs formatter
         },
+        pylsp_mypy = {
+          enabled = true,
+          live_mode = true,
+        },
       },
     },
   },
