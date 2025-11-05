@@ -20,7 +20,7 @@ return { -- Highlight, edit, and navigate code
       'vim',
       'vimdoc',
       'regex',
-      'latex',
+      -- 'latex',
       'yaml',
     },
     -- Autoinstall languages that are not installed
