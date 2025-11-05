@@ -14,6 +14,7 @@ return {
   -- 'json-lsp',
   -- 'lemminx',
   'lua-language-server',
+  'marksman',
   'python-lsp-server',
   'texlab',
   -- 'typescript-language-server',
