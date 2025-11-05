@@ -13,7 +13,6 @@ vim.opt.clipboard = 'unnamedplus'
 
 vim.opt.breakindent = true
 
--- Save undo history
 vim.opt.undofile = true
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
@@ -41,3 +40,4 @@ vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
 vim.opt.termguicolors = true
+vim.o.confirm = true

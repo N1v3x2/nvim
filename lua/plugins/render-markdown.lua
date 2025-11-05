@@ -1,4 +1,3 @@
---- @type LazySpec
 return {
   'MeanderingProgrammer/render-markdown.nvim',
   dependencies = {
@@ -24,6 +23,11 @@ return {
       code = {
         border = 'thick',
         highlight_inline = '',
+      },
+      document = {
+        conceal = {
+          char_patterns = { '\\' },
+        },
       },
     }
   end,
