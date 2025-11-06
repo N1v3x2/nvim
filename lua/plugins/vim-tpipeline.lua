@@ -1,4 +1,3 @@
---- @type LazySpec
 return {
   'vimpostor/vim-tpipeline',
   config = function()

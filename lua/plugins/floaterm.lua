@@ -1,4 +1,3 @@
---- @type LazySpec
 return {
   'voldikss/vim-floaterm',
   init = function()

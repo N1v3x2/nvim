@@ -1,4 +1,3 @@
---- @type LazyConfig
 return {
   'aserowy/tmux.nvim',
   init = function()

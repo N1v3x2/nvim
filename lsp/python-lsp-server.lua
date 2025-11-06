@@ -12,7 +12,7 @@ return {
           formatEnabled = true, -- Enable formatting using ruffs formatter
         },
         pylsp_mypy = {
-          enabled = true,
+          enabled = false,
           live_mode = true,
         },
       },

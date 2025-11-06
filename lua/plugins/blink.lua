@@ -1,4 +1,3 @@
---- @type LazySpec
 return {
   'saghen/blink.cmp',
   event = 'VimEnter',
