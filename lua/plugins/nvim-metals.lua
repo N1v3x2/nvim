@@ -1,9 +1,9 @@
 local map = vim.keymap.set
 local fn = vim.fn
 
---- @type LazySpec
 return {
   'scalameta/nvim-metals',
+  enabled = false,
   dependencies = {
     'nvim-lua/plenary.nvim',
     {

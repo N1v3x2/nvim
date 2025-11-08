@@ -1,18 +1,27 @@
-# My personal NeoVim config
+# My NeoVim Config
 
 ## Todo
 
-- [-] Update custom hover handler (new version) + debug incorrect escape character rendering 
-- [x] Debug markdown.nvim not hiding html tags
-- [-] Update mason config to auto-install plugins for pylsp [reference](https://github.com/mason-org/mason.nvim/discussions/908)
 - [-] Read through updated kickstart config
 - [-] Read through lazyvim plugins
+- [-] Play around with blink.nvim keymaps (<CR> messes with stuff sometimes)
+- [-] Play around with pylsp (want background indexing for large codebases)
+- [-] Add render-markdown override for LSP hover buffer
+- [-] Update custom hover handler (new version)
+- [-] Update mason config to auto-install plugins for pylsp [reference](https://github.com/mason-org/mason.nvim/discussions/908)
 - [-] Explore plugin management systems other than lazy
 - [-] Research git plugins (e.g., turning on git blame in sign column)
+- [-] Read through latest nvim release notes
+- [-] Migrate to nvim 0.12
 
+- [-] Read Lua book
+- [-] Learn more about Lua LSP
 - [-] Finish reading nvim user manual
     - [-] Global options (`vim.o`)
     - [-] Native LSP config
     - [-] Nvim API for plugin development
 - [-] Write a (basic) plugin
+    - [-] Custom HTML rendering in buffer (like [markview.nvim](https://github.com/OXY2DEV/markview.nvim/wiki/HTML))
 - [-] Start contributing to nvim
+
+- [x] Debug markdown.nvim not hiding html tags

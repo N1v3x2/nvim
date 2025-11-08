@@ -1,6 +1,7 @@
 --- @type LazyConfig
 return {
   'aserowy/tmux.nvim',
+  enabled = false,
   init = function()
     vim.keymap.set('n', '<C-n>', function()
       require('tmux').next_window()
