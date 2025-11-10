@@ -11,6 +11,7 @@ return {
     vim.api.nvim_set_hl(0, 'RenderMarkdownH4Bg', { bg = '#1C3321' })
     vim.api.nvim_set_hl(0, 'RenderMarkdownH5Bg', { bg = '#1A2F4A' })
     vim.api.nvim_set_hl(0, 'RenderMarkdownH6Bg', { bg = '#4B2235' })
+
     require('render-markdown').setup {
       completions = { blink = { enabled = true } },
       heading = {
@@ -22,13 +23,12 @@ return {
       },
       code = {
         border = 'thick',
-        highlight_inline = '',
       },
-      document = {
-        conceal = {
-          char_patterns = { '\\' },
-        },
-      },
+      -- document = {
+      --   conceal = {
+      --     char_patterns = { '\\' },
+      --   },
+      -- },
     }
   end,
   init = function()
