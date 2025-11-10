@@ -1,4 +1,3 @@
---- @type LazySpec
 return {
   'danymat/neogen',
   init = function()

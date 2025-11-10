@@ -6,14 +6,19 @@
 - [-] Read through lazyvim plugins
 - [-] Play around with blink.nvim keymaps (<CR> messes with stuff sometimes)
 - [-] Play around with pylsp (want background indexing for large codebases)
-- [-] Add render-markdown override for LSP hover buffer
-- [-] Update custom hover handler (new version)
 - [-] Update mason config to auto-install plugins for pylsp [reference](https://github.com/mason-org/mason.nvim/discussions/908)
 - [-] Explore plugin management systems other than lazy
 - [-] Research git plugins (e.g., turning on git blame in sign column)
 - [-] Read through latest nvim release notes
 - [-] Migrate to nvim 0.12
 
+### LSP Hover
+
+- [-] Add render-markdown override for LSP hover buffer
+- [-] Update custom hover handler (new version)
+- [-] Debug early newline issue (e.g. hover docs in Lua)
+
+### Deep Dive
 - [-] Read Lua book
 - [-] Learn more about Lua LSP
 - [-] Finish reading nvim user manual
