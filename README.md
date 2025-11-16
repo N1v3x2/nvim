@@ -14,6 +14,7 @@
 
 ### LSP Hover
 
+- [-] Maybe render hovers with vimdoc instead of markdown?
 - [-] Add render-markdown override for LSP hover buffer
 - [-] Update custom hover handler (new version)
 - [-] Debug early newline issue (e.g. hover docs in Lua)

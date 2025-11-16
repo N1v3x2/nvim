@@ -152,9 +152,8 @@ lsp_hover.hover = function(error, result, context, _)
     }, true, {})
   end
 
-  vim.cmd 'set winhighlight=Normal:Normal'
-
   if lsp_hover.window and vim.api.nvim_win_is_valid(lsp_hover.window) then
+    vim.api.nvim_set_option_value('winhl', 'Normal:Normal', { win = lsp_hover.window })
     --- If Hover window is active then switch to that
     --- window.
     vim.api.nvim_set_current_win(lsp_hover.window)

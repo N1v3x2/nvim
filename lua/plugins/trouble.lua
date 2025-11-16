@@ -16,21 +16,10 @@ return {
             },
           },
         },
-        preview = {
-          type = 'float',
-          relative = 'editor',
-          border = 'rounded',
-          title = 'Preview',
-          title_pos = 'center',
-          position = { 0, -2 },
-          size = { width = 0.3, height = 0.3 },
-          zindex = 200,
-        },
       },
     },
   },
   cmd = 'Trouble',
-  -- TODO: modularize these keymappings & update which-key.nvim groups
   keys = {
     {
       '<leader>q',
@@ -38,24 +27,24 @@ return {
       desc = 'Diagnostics (Trouble)',
     },
     {
-      '<leader>cs',
-      '<cmd>Trouble lsp_document_symbols toggle focus=false win.position=right<cr>',
+      '<leader>ts',
+      '<cmd>Trouble symbols toggle pinned=true focus=false<cr>',
       desc = 'Symbols (Trouble)',
     },
     {
-      '<leader>cl',
+      '<leader>tl',
       '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
       desc = 'LSP Definitions / references / ... (Trouble)',
     },
     {
-      '<leader>xL',
-      '<cmd>Trouble loclist toggle<cr>',
-      desc = 'Location List (Trouble)',
+      '<leader>tr',
+      '<cmd>Trouble lsp_references toggle focus=false win.position=right<cr>',
+      desc = 'LSP References (Trouble)',
     },
     {
-      '<leader>xQ',
-      '<cmd>Trouble qflist toggle<cr>',
-      desc = 'Quickfix List (Trouble)',
+      '<leader>ti',
+      '<cmd>Trouble lsp_incoming_calls toggle focus=false win.position=right<cr>',
+      desc = 'LSP Incoming Calls (Trouble)',
     },
   },
 }
