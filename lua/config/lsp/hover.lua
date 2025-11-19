@@ -135,6 +135,8 @@ lsp_hover.__init = function(config)
   else
     vim.api.nvim_win_set_config(lsp_hover.window, config)
   end
+
+  vim.api.nvim_set_option_value('winhl', 'Normal:Normal', { win = lsp_hover.window })
 end
 
 --- Custom hover function.
@@ -153,7 +155,6 @@ lsp_hover.hover = function(error, result, context, _)
   end
 
   if lsp_hover.window and vim.api.nvim_win_is_valid(lsp_hover.window) then
-    vim.api.nvim_set_option_value('winhl', 'Normal:Normal', { win = lsp_hover.window })
     --- If Hover window is active then switch to that
     --- window.
     vim.api.nvim_set_current_win(lsp_hover.window)
@@ -184,11 +185,12 @@ lsp_hover.hover = function(error, result, context, _)
     ft = 'markdown'
   elseif type(contents) == 'table' then
     if contents.kind then
-      -- MarkupContent
       lines = vim.split(contents.value or '', '\n', { trimempty = true })
+      -- for i, _ in ipairs(lines) do
+      --   lines[i] = string.gsub(lines[i], '&nbsp;', '')
+      -- end
       ft = contents.kind == 'plaintext' and 'text' or 'markdown'
     else
-      -- MarkedString[] (Java)
       lines = {}
       local has_lines = false
       for _, item in ipairs(contents) do
