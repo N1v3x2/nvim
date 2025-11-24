@@ -37,7 +37,8 @@ return {
       desc = 'LSP Definitions / references / ... (Trouble)',
     },
     {
-      '<leader>tr',
+      -- NOTE: this remaps the default LSP keymap for references
+      'grr',
       '<cmd>Trouble lsp_references toggle focus=false win.position=right<cr>',
       desc = 'LSP References (Trouble)',
     },

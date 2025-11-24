@@ -5,8 +5,6 @@ vim.keymap.set('n', 'grr', vim.lsp.buf.references, { desc = 'vim.lsp.buf.referen
 vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'vim.lsp.buf.definition()' })
 vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, { desc = 'vim.lsp.buf.type_definition()' })
 
-require('config.lsp.hover').setup()
-
 vim.diagnostic.config {
   severity_sort = true,
   float = {
