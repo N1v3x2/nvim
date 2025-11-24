@@ -1,8 +1,8 @@
 return { -- Useful plugin to show you pending keybinds.
   'folke/which-key.nvim',
-  event = 'VimEnter', -- Sets the loading event to 'VimEnter'
+  event = 'VeryLazy', -- Sets the loading event to 'VimEnter'
   opts = {
-    -- Delay between pressing a key and opening which-key (milliseconds)
+    preset = 'helix',
     delay = 0,
     icons = {
       mappings = vim.g.have_nerd_font,
@@ -13,6 +13,15 @@ return { -- Useful plugin to show you pending keybinds.
       { '<leader>s', group = '[S]earch' },
       { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       { '<leader>t', group = '[T]rouble' },
+    },
+  },
+  keys = {
+    {
+      '<leader>?',
+      function()
+        require('which-key').show { global = false }
+      end,
+      desc = 'Buffer Local Keymaps (which-key)',
     },
   },
 }
