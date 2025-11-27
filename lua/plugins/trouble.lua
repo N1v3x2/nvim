@@ -3,10 +3,10 @@ return {
   opts = {
     modes = {
       mydiags = {
-        mode = 'diagnostics', -- inherit from diagnostics mode
+        mode = 'diagnostics',
         filter = {
           any = {
-            buf = 0, -- current buffer
+            buf = 0,
             {
               severity = vim.diagnostic.severity.ERROR, -- errors only
               -- limit to files in the current project
