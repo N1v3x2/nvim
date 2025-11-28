@@ -10,7 +10,7 @@ return {
         autoImportCompletions = true,
         useLibraryCodeForTypes = true,
         diagnosticMode = 'workspace',
-        typeCheckingMode = 'off'
+        typeCheckingMode = 'off',
       },
     },
   },

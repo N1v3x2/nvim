@@ -15,17 +15,17 @@ return {
     },
     {
       'gl',
-      '<Cmd>Trouble lsp toggle win.position=right<CR>',
+      '<Cmd>Trouble lsp toggle<CR>',
       desc = 'LSP dump (Trouble)',
     },
     {
       'grr',
-      '<Cmd>Trouble lsp_references toggle win.position=right<CR>',
+      '<Cmd>Trouble lsp_references toggle<CR>',
       desc = 'LSP references (Trouble)',
     },
     {
       'gd',
-      '<Cmd>Trouble lsp_definitions toggle win.position=right<CR>',
+      '<Cmd>Trouble lsp_definitions toggle<CR>',
       desc = 'LSP definitions (Trouble)',
     },
   },
