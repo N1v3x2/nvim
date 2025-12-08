@@ -4,6 +4,9 @@ return {
     local tmux = require 'tmux'
 
     tmux.setup {
+      copy_sync = {
+        sync_clipboard = false,
+      },
       navigation = {
         enable_default_keybindings = false,
       },
