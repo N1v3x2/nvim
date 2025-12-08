@@ -2,9 +2,10 @@ return {
   'aserowy/tmux.nvim',
   config = function()
     local tmux = require 'tmux'
+
     tmux.setup {
       copy_sync = {
-        enabled = false,
+        sync_clipboard = false,
       },
       navigation = {
         enable_default_keybindings = false,
