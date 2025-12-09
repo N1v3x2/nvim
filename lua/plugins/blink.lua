@@ -1,4 +1,3 @@
---- @type LazySpec
 return {
   'saghen/blink.cmp',
   event = 'VimEnter',
@@ -57,13 +56,13 @@ return {
         auto_show_delay_ms = 500,
         window = {
           border = 'rounded',
-          -- winhighlight = 'Normal:Normal,NormalFloat:Normal,FloatBorder:Comment',
+          winhighlight = 'Normal:Normal,NormalFloat:Normal,FloatBorder:Comment',
         },
       },
       ghost_text = { enabled = true },
       menu = {
         border = 'rounded',
-        -- winhighlight = 'Normal:Normal,PmenuExtra:Normal,FloatBorder:Comment,CursorLine:TelescopeSelection',
+        winhighlight = 'Normal:Normal,PmenuExtra:Normal,FloatBorder:Comment,CursorLine:TelescopeSelection',
       },
     },
 
@@ -90,7 +89,7 @@ return {
       enabled = true,
       window = {
         border = 'rounded',
-        -- winhighlight = 'Normal:Normal,FloatBorder:Comment',
+        winhighlight = 'Normal:Normal,FloatBorder:Comment',
       },
     },
   },
