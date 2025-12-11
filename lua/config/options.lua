@@ -1,4 +1,3 @@
---  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
@@ -37,3 +36,5 @@ vim.opt.inccommand = 'split'
 vim.opt.cursorline = true
 
 vim.opt.scrolloff = 10
+
+vim.opt.cmdheight = 0
