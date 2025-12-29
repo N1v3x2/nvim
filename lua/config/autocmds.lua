@@ -6,11 +6,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
-vim.api.nvim_create_autocmd('TermOpen', {
-  desc = 'Turn off line numbers in terminal mode',
-  group = vim.api.nvim_create_augroup('term-options', { clear = true }),
+vim.api.nvim_create_autocmd('BufAdd', {
+  desc = 'Open help windows to the right',
+  group = vim.api.nvim_create_augroup('help-options', { clear = true }),
+  pattern = '*/doc/*.txt',
   callback = function()
-    vim.o.number = false
-    vim.o.relativenumber = false
+    vim.api.nvim_win_set_config(0, {
+      split = 'right',
+      win = 0
+    })
   end,
 })
