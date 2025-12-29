@@ -12,13 +12,19 @@ snippet cf Codeforces
 
     constexpr char nl = '\n';
 
-    $1
+    auto solve() {
+        $0
+    }
 
     int main() {
         ios_base::sync_with_stdio(false);
         cin.tie(NULL);
 
-        $0
+        int t;
+        $1
+        while (t--) {
+            cout << solve() << nl;
+        }
     }
 
 snippet ordset GNU PBDS Order Statistic Tree

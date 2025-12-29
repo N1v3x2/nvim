@@ -1,9 +1,9 @@
 snippet cf Codeforces
     import sys
 
-    input = lambda: sys.stdin.readline().rstrip()
-    II = lambda: int(input())
-    LII = lambda: list(map(int, input().split()))
+    input = lambda: sys.stdin.readline().rstrip('\r\n ')
+    ii = lambda: int(input())
+    lii = lambda: list(map(int, input().split()))
 
     def solve():
         pass$0
@@ -13,6 +13,7 @@ snippet cf Codeforces
         for _ in range(T):
             ans = solve()
             print(ans)
+
     main()
 
 snippet gs Graham Scan
