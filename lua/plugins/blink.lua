@@ -3,73 +3,70 @@ return {
   event = 'VimEnter',
   version = '1.*',
   dependencies = {
-    -- Snippet Engine
-    {
-      'L3MON4D3/LuaSnip',
-      version = '2.*',
-      build = (function()
-        -- Build Step is needed for regex support in snippets.
-        -- This step is not supported in many windows environments.
-        -- Remove the below condition to re-enable on windows.
-        if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-          return
-        end
-        return 'make install_jsregexp'
-      end)(),
-      dependencies = {
-        -- `friendly-snippets` contains a variety of premade snippets.
-        --    See the README about individual language/framework/plugin snippets:
-        --    https://github.com/rafamadriz/friendly-snippets
-        {
-          'rafamadriz/friendly-snippets',
-          config = function()
-            require('luasnip.loaders.from_vscode').lazy_load()
-          end,
-        },
-      },
-      opts = {},
-    },
+    { 'L3MON4D3/LuaSnip', version = '2.*' },
     'folke/lazydev.nvim',
   },
   init = function()
     require('luasnip.loaders.from_snipmate').lazy_load()
   end,
-
   opts = {
     keymap = {
-      preset = 'enter',
-      ['<Tab>'] = { 'select_next', 'fallback' },
-      ['<S-Tab>'] = { 'select_prev', 'fallback' },
-      ['<C-l>'] = { 'snippet_forward', 'fallback' },
-      ['<C-h>'] = { 'snippet_backward', 'fallback' },
+      preset = 'none',
+      ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+      ['<C-e>'] = { 'hide', 'fallback' },
+
+      ['<Tab>'] = { 'accept', 'fallback' },
+
+      ['<C-j>'] = { 'select_next', 'fallback_to_mappings' },
+      ['<C-k>'] = { 'select_prev', 'fallback_to_mappings' },
+      ['<C-p>'] = { 'select_next', 'fallback_to_mappings' },
+      ['<C-n>'] = { 'select_prev', 'fallback_to_mappings' },
+
+      ['<C-l>'] = { 'snippet_forward', 'fallback_to_mappings' },
+      ['<C-h>'] = { 'snippet_backward', 'fallback_to_mappings' },
+
+      ['<C-u>'] = { 'scroll_documentation_up', 'fallback' },
+      ['<C-d>'] = { 'scroll_documentation_down', 'fallback' },
+
+      ['<C-s>'] = { 'show_signature', 'hide_signature', 'fallback' },
+    },
+
+    cmdline = {
+      keymap = {
+        preset = 'inherit',
+      }
     },
 
     appearance = {
-      -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
-      -- Adjusts spacing to ensure icons are aligned
       nerd_font_variant = 'mono',
     },
 
     completion = {
       documentation = {
-        auto_show = true,
-        auto_show_delay_ms = 500,
+        -- auto_show = true,
+        -- auto_show_delay_ms = 500,
         window = {
           border = 'rounded',
-          winhighlight = 'Normal:Normal,NormalFloat:Normal,FloatBorder:Comment',
+          winhighlight = 'Normal:Normal',
         },
       },
       ghost_text = { enabled = true },
       menu = {
         border = 'rounded',
-        winhighlight = 'Normal:Normal,PmenuExtra:Normal,FloatBorder:Comment,CursorLine:TelescopeSelection',
+        draw = {
+          treesitter = { 'lsp' },
+        },
+        winhighlight = 'Normal:Normal,PmenuExtra:Normal,CursorLine:TelescopeSelection',
       },
     },
 
     sources = {
-      default = { 'lsp', 'path', 'snippets', 'lazydev' },
+      default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
       providers = {
-        lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+        lazydev = {
+          module = 'lazydev.integrations.blink',
+          score_offset = 100,
+        },
       },
     },
 
@@ -89,7 +86,6 @@ return {
       enabled = true,
       window = {
         border = 'rounded',
-        winhighlight = 'Normal:Normal,FloatBorder:Comment',
       },
     },
   },
