@@ -3,7 +3,6 @@ return {
   'clangd',
   'eslint-lsp',
   'gopls',
-  'html-lsp',
   'jdtls',
   'lua-language-server',
   'pyright',
