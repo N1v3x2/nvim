@@ -19,8 +19,8 @@ return {
 
       ['<C-j>'] = { 'select_next', 'fallback_to_mappings' },
       ['<C-k>'] = { 'select_prev', 'fallback_to_mappings' },
-      ['<C-p>'] = { 'select_next', 'fallback_to_mappings' },
-      ['<C-n>'] = { 'select_prev', 'fallback_to_mappings' },
+      ['<C-n>'] = { 'select_next', 'fallback_to_mappings' },
+      ['<C-p>'] = { 'select_prev', 'fallback_to_mappings' },
 
       ['<C-l>'] = { 'snippet_forward', 'fallback_to_mappings' },
       ['<C-h>'] = { 'snippet_backward', 'fallback_to_mappings' },
@@ -34,6 +34,7 @@ return {
     cmdline = {
       keymap = {
         preset = 'inherit',
+        ['<Tab>'] = { 'show_and_insert', 'accept', 'fallback' },
       }
     },
 
@@ -43,8 +44,6 @@ return {
 
     completion = {
       documentation = {
-        -- auto_show = true,
-        -- auto_show_delay_ms = 500,
         window = {
           border = 'rounded',
           winhighlight = 'Normal:Normal',
@@ -84,6 +83,7 @@ return {
     -- Shows a signature help window while you type arguments for a function
     signature = {
       enabled = true,
+      trigger = { enabled = false },
       window = {
         border = 'rounded',
       },
