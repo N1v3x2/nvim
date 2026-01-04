@@ -12,8 +12,18 @@ require('lazy').setup {
   spec = {
     { import = 'plugins' },
   },
+  install = {
+    colorscheme = { 'gruvbox-material', 'vim' },
+  },
+  ui = {
+    title = 'Lazy',
+    border = 'rounded',
+  },
   checker = {
     enabled = true,
     notify = false,
   },
+  change_detection = {
+    notify = false,
+  }
 }
