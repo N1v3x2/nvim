@@ -10,6 +10,9 @@ return {
       'stylua',
       'clang-format',
     })
-    require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+    require('mason-tool-installer').setup {
+      auto_update = true,
+      ensure_installed = ensure_installed,
+    }
   end,
 }
