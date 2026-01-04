@@ -1,17 +1,9 @@
 local servers = require 'config.lsp.servers'
 vim.lsp.enable(servers)
 
--- Override LSP preview window style
-local overridden = vim.lsp.util.open_floating_preview
-vim.lsp.util.open_floating_preview = function(contents, syntax, opts, ...)
-  opts = vim.tbl_extend('force', opts, {
-    border = 'rounded',
-  })
-  return overridden(contents, syntax, opts, ...)
-end
-
-vim.keymap.set('n', 'grr', vim.lsp.buf.references, { desc = 'vim.lsp.buf.references()' })
-vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = 'vim.lsp.buf.definition()' })
+vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, {
+  desc = 'vim.diagnostic.open_float',
+})
 
 vim.diagnostic.config {
   severity_sort = true,
