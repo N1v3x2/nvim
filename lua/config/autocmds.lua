@@ -6,14 +6,13 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
-vim.api.nvim_create_autocmd('BufAdd', {
+vim.api.nvim_create_autocmd('BufWinEnter', {
   desc = 'Open help windows to the right',
   group = vim.api.nvim_create_augroup('help-options', { clear = true }),
-  pattern = '*/doc/*.txt',
+  pattern = '*/doc/*.{txt,md}',
   callback = function()
-    vim.api.nvim_win_set_config(0, {
-      split = 'right',
-      win = 0
-    })
+    local tab_id = vim.api.nvim_get_current_tabpage()
+    -- TODO: only open to the right if window is wide enough
+    pcall(vim.api.nvim_win_set_config, 0, { split = 'right', win = 0 })
   end,
 })
